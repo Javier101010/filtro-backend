@@ -120,3 +120,51 @@ def filtro_laplaciano(imagen: np.ndarray):
     resultado = normalizar(resultado)
 
     return resultado
+
+
+def filtro_sobel_crudo(imagen: np.ndarray):
+    img, img_padded, offset = preparar_imagen(imagen)
+
+    mascara = np.array([
+        [1, 0, -1],
+        [2, 0, -2],
+        [1, 0, -1]
+    ])
+
+    resultado = np.zeros_like(img, dtype=float)
+
+    for i in range(offset, img_padded.shape[0] - offset):
+        for j in range(offset, img_padded.shape[1] - offset):
+
+            ventana = img_padded[
+                i-offset:i+offset+1,
+                j-offset:j+offset+1
+            ]
+
+            resultado[i-offset, j-offset] = np.sum(ventana * mascara)
+
+    return resultado
+
+
+def filtro_laplaciano_crudo(imagen: np.ndarray):
+    img, img_padded, offset = preparar_imagen(imagen)
+
+    mascara = np.array([
+        [0, -1, 0],
+        [-1, 4, -1],
+        [0, -1, 0]
+    ])
+
+    resultado = np.zeros_like(img, dtype=float)
+
+    for i in range(offset, img_padded.shape[0] - offset):
+        for j in range(offset, img_padded.shape[1] - offset):
+
+            ventana = img_padded[
+                i-offset:i+offset+1,
+                j-offset:j+offset+1
+            ]
+
+            resultado[i-offset, j-offset] = np.sum(ventana * mascara)
+
+    return resultado

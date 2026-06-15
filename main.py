@@ -9,10 +9,13 @@ from app.filtros.filtros import (
     filtro_media,
     filtro_mediana,
     filtro_sobel,
-    filtro_laplaciano
+    filtro_laplaciano,
+    filtro_sobel_crudo,
+    filtro_laplaciano_crudo
 )
 
 app = FastAPI()
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -39,31 +42,28 @@ def cargar_imagen(archivo: UploadFile):
 @app.post("/filtro/explicacion")
 def obtener_explicacion(filtros: list[str], imagen: UploadFile = File(...)):
     matriz_original = cargar_imagen(imagen)
-    media, mediana, sobel, laplaciano = None, None, None, None
-
-    ejecuciones = 0
+    media, mediana, sobel,sobel_crudo, laplaciano, laplaciano_crudo = None, None, None, None, None, None
 
     for filtro in filtros:
         if filtro == "media":
             media = filtro_media(matriz_original)
-            ejecuciones += 1
         elif filtro == "mediana":
             mediana = filtro_mediana(matriz_original)
-            ejecuciones += 1
         elif filtro == "sobel":
             sobel = filtro_sobel(matriz_original)
-            ejecuciones += 1
+            sobel_crudo = filtro_sobel_crudo(matriz_original)
         elif filtro == "laplaciano":
             laplaciano = filtro_laplaciano(matriz_original)
-            ejecuciones += 1
-
+            laplaciano_crudo = filtro_laplaciano_crudo(matriz_original)
     
     return {
         "matriz_original": matriz_original.tolist(),
         "filtro_media": media.tolist() if media is not None else None,
         "filtro_mediana": mediana.tolist() if mediana is not None else None,
         "filtro_sobel": sobel.tolist() if sobel is not None else None,
-        "filtro_laplaciano": laplaciano.tolist() if laplaciano is not None else None
+        "filtro_sobel_crudo": sobel_crudo.tolist() if sobel_crudo is not None else None,
+        "filtro_laplaciano": laplaciano.tolist() if laplaciano is not None else None,
+        "filtro_laplaciano_crudo": laplaciano_crudo.tolist() if laplaciano_crudo is not None else None
     }
 
 
